@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import socket
 
+sg.theme('DarkBlue2')
 
 def get_port_ip():
     layout = [
@@ -55,7 +56,6 @@ def send_message(msg):
     return client.recv(2048).decode(FORMAT)
 
 def main():
-    sg.theme('DarkBlue2')
 
     layout = [
         [sg.Text('Digite uma mensagem:')],
