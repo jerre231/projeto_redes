@@ -11,24 +11,44 @@ def get_port_ip():
 
     window = sg.Window('Configuração de IP e Porta', layout)
 
+    ip, porta = 'localhost', 18000  # Valores padrão
     while True:
         event, values = window.read()
 
         if event == sg.WINDOW_CLOSED:
             window.close()
-            return None, None
+            break
         elif event == 'Conectar':
             ip = values['ip']
             porta = values['porta']
             window.close()
-            return ip, porta
+
+    return ip, porta
 
 ip, porta = get_port_ip()
+
+if not porta:
+    porta = 18000  # Porta padrão ou um valor que você preferir
+else:
+    try:
+        porta = int(porta)
+    except ValueError:
+        porta = 18000
 
 HEADER = 64
 FORMAT = 'utf-8'
 SERVER = ip
-PORT = int(porta)
+PORT = porta
+ADDR = (SERVER, PORT)
+DISCONNECT = ':D'
+
+# O restante do código permanece inalterado
+
+
+HEADER = 64
+FORMAT = 'utf-8'
+SERVER = ip
+PORT = porta
 ADDR = (SERVER, PORT)
 DISCONNECT = ':D'
 
