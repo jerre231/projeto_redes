@@ -28,7 +28,7 @@ def get_port_ip():
 ip, porta = get_port_ip()
 
 if not porta:
-    porta = 18000  # Porta padrão ou um valor que você preferir
+    porta = 18000
 else:
     try:
         porta = int(porta)
@@ -41,17 +41,6 @@ SERVER = ip
 PORT = porta
 ADDR = (SERVER, PORT)
 DISCONNECT = ':D'
-
-# O restante do código permanece inalterado
-
-
-HEADER = 64
-FORMAT = 'utf-8'
-SERVER = ip
-PORT = porta
-ADDR = (SERVER, PORT)
-DISCONNECT = ':D'
-
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
