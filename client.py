@@ -1,12 +1,37 @@
 import PySimpleGUI as sg
 import socket
 
+
+def get_port_ip():
+    layout = [
+        [sg.Text('Digite o IP para conectar:'), sg.InputText(key='ip')],
+        [sg.Text('Digite a porta para conectar:'), sg.InputText(key='porta')],
+        [sg.Button('Conectar')],
+    ]
+
+    window = sg.Window('Configuração de IP e Porta', layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WINDOW_CLOSED:
+            window.close()
+            return None, None
+        elif event == 'Conectar':
+            ip = values['ip']
+            porta = values['porta']
+            window.close()
+            return ip, porta
+
+ip, porta = get_port_ip()
+
 HEADER = 64
-PORT = 18000
 FORMAT = 'utf-8'
-SERVER = 'localhost'
+SERVER = ip
+PORT = int(porta)
 ADDR = (SERVER, PORT)
 DISCONNECT = ':D'
+
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)

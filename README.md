@@ -14,3 +14,8 @@ Repositório utilizado para a disciplina de Redes de Computadores da Universidad
 
 - João Ricardo Monteiro Scofield Lauar
 
+**Requerimentos:**
+
+```shell
+pip install -r requirements.txt
+```
