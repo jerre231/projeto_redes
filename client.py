@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import socket
+import threading
 
 sg.theme('DarkBlue2')
 
@@ -55,15 +56,27 @@ def send_message(msg):
     client.send(message)
     return client.recv(2048).decode(FORMAT)
 
-def main():
+def receive_message():
+    while True:
+        try:
+            response = client.recv(2048).decode(FORMAT)
+            print(f'Servidor: {response}')
+        except:
+            pass
 
+def main():
     layout = [
-        [sg.Text('Digite uma mensagem:')],
+        [sg.Text('Bate-Papo com o Servidor')],
+        [sg.Output(size=(50, 10), key='-OUTPUT-')],
         [sg.InputText(key='input_text')],
         [sg.Button('Send')],
     ]
 
     window = sg.Window('Chat Cliente', layout)
+
+    thread = threading.Thread(target=receive_message)
+    thread.daemon = True
+    thread.start()
 
     while True:
         event, values = window.read()
@@ -78,8 +91,8 @@ def main():
                 sg.popup('Desconectando...')
                 break
             else:
-                response = send_message(message)
-                sg.popup(f'Resposta do servidor: {response}')
+                send_message(message)
+                print(f'Você: {message}')
 
     window.close()
     client.close()
