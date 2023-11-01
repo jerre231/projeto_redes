@@ -105,7 +105,7 @@ def main():
                 break
             else:
                 send_message(message)
-                window['-OUTPUT-'].update(f'Você: {message}\n', append=True)
+                #window['-OUTPUT-'].update(f'Você: {message}\n', append=True)
 
     window.close()
     client.close()
