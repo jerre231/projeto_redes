@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 import socket
 import threading
-import queue
 
 sg.theme('DarkBlue2')
 
@@ -14,7 +13,7 @@ def get_port_ip():
 
     window = sg.Window('Configuração de IP e Porta', layout)
 
-    ip, porta = 'localhost', 18000  # Default values
+    ip, porta = 'localhost', 18000  # Valores padrão
     while True:
         event, values = window.read()
 
@@ -48,25 +47,34 @@ DISCONNECT = ':D'
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-message_queue = queue.Queue()
-
 def send_message(msg):
-    message = msg.encode(FORMAT)
-    msg_len = len(message)
-    send_len = str(msg_len).encode(FORMAT)
-    send_len += b' ' * (HEADER - len(send_len))
-    client.send(send_len)
-    client.send(message)
-    return client.recv(2048).decode(FORMAT)
+    event = threading.Event()
+
+    def send_thread():
+        message = msg.encode(FORMAT)
+        msg_len = len(message)
+        send_len = str(msg_len).encode(FORMAT)
+        send_len += b' ' * (HEADER - len(send_len))
+        client.send(send_len)
+        client.send(message)
+        event.set()
+
+    thread = threading.Thread(target=send_thread)
+    thread.start()
+    thread.join()
+
+    return event.wait(1000)
 
 def receive_message():
     while True:
         try:
             response = client.recv(2048).decode(FORMAT)
-            message_queue.put(response)
-        except:
-            pass
+            
+            #if "127.0.0.1" not in response:  ##Tentativa de tirar a duplicata de mensagens no cliente
+            print(f'Servidor: {response}')
 
+        except:
+            break
 def main():
     layout = [
         [sg.Text('Bate-Papo com o Servidor')],
@@ -75,15 +83,17 @@ def main():
         [sg.Button('Send')],
     ]
 
+   
     window = sg.Window('Chat Cliente', layout)
 
+  
     thread = threading.Thread(target=receive_message)
     thread.daemon = True
     thread.start()
-
+  
     while True:
-        event, values = window.read(timeout=100)
-
+        event, values = window.read()
+      
         if event == sg.WINDOW_CLOSED:
             send_message(DISCONNECT)
             break
@@ -95,14 +105,7 @@ def main():
                 break
             else:
                 send_message(message)
-                print(f'Você: {message}')
-
-        try:
-            while True:
-                message = message_queue.get_nowait()
-                print(f'Servidor: {message}')
-        except queue.Empty:
-            pass
+                window['-OUTPUT-'].update(f'Você: {message}\n', append=True)
 
     window.close()
     client.close()

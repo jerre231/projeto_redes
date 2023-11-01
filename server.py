@@ -31,7 +31,7 @@ def handler(conn, addr):
                 msg = conn.recv(msg_length).decode(FORMAT)
                 if msg == DISCONNECT:
                     conectado = False
-                    print(f"Desconctando: {addr}")
+                    print(f"Desconectando: {addr}")
                     continue
 
                 print(f'[{time.ctime()}][{addr}]: {msg}')
